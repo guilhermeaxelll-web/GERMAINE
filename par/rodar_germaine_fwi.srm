@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=FWI_Marm
+#SBATCH --nodes=1
+#SBATCH --ntasks=16
+#SBATCH --cpus-per-task=1
+#SBATCH --time=012:00:00
+#SBATCH --partition=intel-512
+
+# Entra no diretorio de submissao
+cd $SLURM_SUBMIT_DIR
+
+# Carrega os modulos necessarios
+module load softwares/python/3.10.5-gnu8
+module load libraries/openmpi/4.1.8-gnu8
+module load libraries/blas/3.10.0-gnu8
+module load libraries/lapack/3.10.0-gnu8
+
+# ... (módulos e configurações anteriores) ...
+
+echo "Iniciando a Inversão FWI do Marmousi..."
+
+# Define o caminho da biblioteca baixada localmente
+export LD_LIBRARY_PATH=~/miniconda_local/lib:$LD_LIBRARY_PATH
+
+# Executa o GERMAINE repassando a variável (-x) para todos os processos MPI
+mpirun -x LD_LIBRARY_PATH -np 16 ../bin/germaine GERMAINE_marmousi_fwi.inp GERMAINE_workflow_marmousi.inp
+
+echo "Processamento FWI finalizado com sucesso!"

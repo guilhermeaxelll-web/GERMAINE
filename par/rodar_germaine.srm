@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=FWI_Marmousi
+#SBATCH --nodes=1
+#SBATCH --ntasks=16
+#SBATCH --cpus-per-task=1
+#SBATCH --time=04:00:00
+#SBATCH --partition=intel-512
+# Entra no diretorio de submissao
+cd $SLURM_SUBMIT_DIR
+
+# Carrega os modulos necessarios
+module load softwares/python/3.10.5-gnu8
+module load libraries/openmpi/4.1.8-gnu8
+module load libraries/blas/3.10.0-gnu8
+module load libraries/lapack/3.10.0-gnu8
+
+echo "Iniciando a Modelagem Direta do Marmousi..."
+mpirun -np 16 ../bin/germaine GERMAINE_marmousi.inp GERMAINE_workflow_marmousi.inp
+
+echo "Processamento finalizado com sucesso!"
